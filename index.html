@@ -144,31 +144,102 @@ a{color:inherit;text-decoration:none}
 
 /* ========== SECTION HEADING ========== */
 .section-heading{
-  padding:40px 24px 20px;
-  font-size:18px;font-weight:700;line-height:1.6;
+  padding:40px 24px 8px;
+  font-size:20px;font-weight:700;line-height:1.6;
+}
+.section-sub{
+  padding:0 24px 20px;
+  font-size:13px;color:var(--text-sub);line-height:1.7;
 }
 
-/* ========== SELECTION CARDS ========== */
-.selection-cards{padding:0 24px;display:flex;flex-direction:column;gap:12px}
-.selection-card{
-  background:var(--white);border-radius:var(--radius);
-  padding:20px 20px;
-  box-shadow:var(--shadow);
-  display:flex;align-items:center;gap:16px;
-  border:2px solid transparent;
+/* ========== STEP PROGRESS (TOP) ========== */
+.top-steps{
+  padding:24px 24px 0;
+  display:flex;align-items:flex-start;justify-content:space-between;
+  position:relative;
+}
+.top-step{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  flex:1;position:relative;z-index:1;
+}
+.top-step-dot{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--border);color:var(--text-light);
+  display:flex;align-items:center;justify-content:center;
   transition:var(--transition);
 }
-.selection-card:active{transform:scale(0.98)}
+.top-step-dot svg{width:18px;height:18px}
+.top-step.active .top-step-dot{background:var(--blue);color:var(--white)}
+.top-step-label{font-size:10px;color:var(--text-light);text-align:center;font-weight:500}
+.top-step.active .top-step-label{color:var(--blue);font-weight:700}
+.top-steps-line{
+  position:absolute;top:18px;left:48px;right:48px;
+  height:2px;background:var(--border);z-index:0;
+}
+
+/* ========== SELECTION CARDS v2 ========== */
+.selection-cards{padding:0 24px;display:flex;flex-direction:column;gap:10px}
+.selection-card{
+  background:var(--white);border-radius:16px;
+  padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  border:none;
+  border-left:4px solid transparent;
+  transition:var(--transition);
+  box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.selection-card:active{transform:scale(0.98);opacity:0.9}
 .selection-card .sel-icon{
-  width:48px;height:48px;border-radius:14px;
+  width:40px;height:40px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.selection-card:nth-child(1) .sel-icon{background:#EBF2FE;color:var(--blue)}
-.selection-card:nth-child(2) .sel-icon{background:#FEF3C7;color:#D97706}
-.selection-card:nth-child(3) .sel-icon{background:#FCE7F3;color:#DB2777}
-.selection-card .sel-icon svg{width:24px;height:24px}
-.selection-card .sel-text h3{font-size:15px;font-weight:700;margin-bottom:2px}
-.selection-card .sel-text p{font-size:12px;color:var(--text-sub)}
+.selection-card .sel-icon svg{width:20px;height:20px}
+.selection-card .sel-text{flex:1}
+.selection-card .sel-text h3{font-size:14px;font-weight:700;margin:0}
+.selection-card .sel-arrow{
+  color:var(--text-light);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.selection-card .sel-arrow svg{width:16px;height:16px}
+
+/* Card colors */
+.sel-work{border-left-color:#3D78F2}
+.sel-work .sel-icon{background:#E8F0FF;color:#3D78F2}
+.sel-work .sel-text h3{color:#3D78F2}
+.sel-work .sel-arrow{color:#3D78F2}
+
+.sel-family{border-left-color:#3DAA6D}
+.sel-family .sel-icon{background:#DCEEDF;color:#3DAA6D}
+.sel-family .sel-text h3{color:#3DAA6D}
+.sel-family .sel-arrow{color:#3DAA6D}
+
+.sel-school{border-left-color:#D4920B}
+.sel-school .sel-icon{background:#F4E8BC;color:#D4920B}
+.sel-school .sel-text h3{color:#D4920B}
+.sel-school .sel-arrow{color:#D4920B}
+
+.sel-friend{border-left-color:#3882B6}
+.sel-friend .sel-icon{background:#E0EEF8;color:#3882B6}
+.sel-friend .sel-text h3{color:#3882B6}
+.sel-friend .sel-arrow{color:#3882B6}
+
+.sel-service{border-left-color:#C4567A}
+.sel-service .sel-icon{background:#F5D8E7;color:#C4567A}
+.sel-service .sel-text h3{color:#C4567A}
+.sel-service .sel-arrow{color:#C4567A}
+
+.sel-shared{border-left-color:#8B7A6B}
+.sel-shared .sel-icon{background:#F0EAE4;color:#8B7A6B}
+.sel-shared .sel-text h3{color:#8B7A6B}
+.sel-shared .sel-arrow{color:#8B7A6B}
+
+/* ========== BOTTOM NOTE ========== */
+.bottom-note{
+  padding:20px 24px 8px;
+  font-size:12px;color:var(--text-light);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.bottom-note svg{width:14px;height:14px;flex-shrink:0}
 
 /* ========== DISCLAIMER ========== */
 .disclaimer{
@@ -488,40 +559,90 @@ a{color:inherit;text-decoration:none}
       </div>
     </section>
 
+    <!-- STEP PROGRESS -->
+    <div class="top-steps">
+      <div class="top-steps-line"></div>
+      <div class="top-step active">
+        <div class="top-step-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+        </div>
+        <span class="top-step-label">あなたの立場</span>
+      </div>
+      <div class="top-step">
+        <div class="top-step-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M20 21v-2a4 4 0 00-3-3.87"/><circle cx="5" cy="8" r="4"/><path d="M4 21v-2a4 4 0 013-3.87"/></svg>
+        </div>
+        <span class="top-step-label">相手の立場</span>
+      </div>
+      <div class="top-step">
+        <div class="top-step-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        </div>
+        <span class="top-step-label">環境・職業</span>
+      </div>
+      <div class="top-step">
+        <div class="top-step-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <span class="top-step-label">チェックへ</span>
+      </div>
+    </div>
+
     <!-- SECTION HEADING -->
     <div class="section-heading">
-      まずは、<br>あなたの立場と<br>相手を選んでください
+      まずは、あなたの立場を<br>選んでください
     </div>
 
     <!-- SELECTION CARDS -->
     <div class="selection-cards">
-      <button class="selection-card" onclick="startCheck('school')">
-        <div class="sel-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-        </div>
-        <div class="sel-text">
-          <h3>学校での関係を調べる</h3>
-          <p>先生・先輩・後輩・友人・恋人など</p>
-        </div>
-      </button>
-      <button class="selection-card" onclick="startCheck('work')">
+      <button class="selection-card sel-work" onclick="startCheck('work')">
         <div class="sel-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
         </div>
-        <div class="sel-text">
-          <h3>職場での関係を調べる</h3>
-          <p>上司・部下・同僚など</p>
-        </div>
+        <div class="sel-text"><h3>職場での関係</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
       </button>
-      <button class="selection-card" onclick="startCheck('family')">
+      <button class="selection-card sel-family" onclick="startCheck('family')">
         <div class="sel-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
-        <div class="sel-text">
-          <h3>家族の関係を調べる</h3>
-          <p>親・兄弟・親戚など</p>
-        </div>
+        <div class="sel-text"><h3>家族・親族の関係</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
       </button>
+      <button class="selection-card sel-school" onclick="startCheck('school')">
+        <div class="sel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/></svg>
+        </div>
+        <div class="sel-text"><h3>学校・教育の関係</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      </button>
+      <button class="selection-card sel-friend" onclick="startCheck('friend')">
+        <div class="sel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="sel-text"><h3>友人・プライベート・地域社会</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      </button>
+      <button class="selection-card sel-service" onclick="startCheck('service')">
+        <div class="sel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3h18v18H3z" rx="2"/><path d="M9 3v18"/><path d="M3 9h6"/><path d="M3 15h6"/></svg>
+        </div>
+        <div class="sel-text"><h3>サービス・ビジネス（職場以外）</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      </button>
+      <button class="selection-card sel-shared" onclick="startCheck('shared')">
+        <div class="sel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><rect x="9" y="13" width="6" height="9"/></svg>
+        </div>
+        <div class="sel-text"><h3>共同生活（家族以外）</h3></div>
+        <div class="sel-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+      </button>
+    </div>
+
+    <!-- BOTTOM NOTE -->
+    <div class="bottom-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>選択内容は後から変更できます</span>
     </div>
 
     <!-- DISCLAIMER -->
@@ -772,9 +893,12 @@ const state = {
 
 // ========== DATA ==========
 const RELATIONS = {
-  school: ['先生','先輩','後輩','友人','恋人','その他'],
-  work:   ['上司','部下','同僚・チームメンバー','取引先','その他'],
-  family: ['親','兄弟・姉妹','配偶者','子ども','親戚','その他'],
+  work:    ['上司','部下','同僚・チームメンバー','取引先','派遣・パート','その他'],
+  family:  ['親','兄弟・姉妹','配偶者','子ども','義父母','親戚','その他'],
+  school:  ['先生','先輩','後輩','クラスメイト','友人','恋人','その他'],
+  friend:  ['友人','近所の人','趣味仲間','ママ友・パパ友','SNSの知人','その他'],
+  service: ['お客様','取引先','利用者','患者','保護者','その他'],
+  shared:  ['ルームメイト','シェアハウス仲間','施設の同居者','その他'],
 };
 
 const QUESTIONS = [
@@ -966,7 +1090,7 @@ function goStep3() {
 
 // ========== BUILD CONFIRMATION ==========
 function buildConfirmation() {
-  const contextLabel = { school: '学校', work: '職場', family: '家族' }[state.context];
+  const contextLabel = { school:'学校・教育', work:'職場', family:'家族・親族', friend:'友人・地域', service:'サービス・ビジネス', shared:'共同生活' }[state.context];
   const el = document.getElementById('confirmContent');
   const checkedItems = state.checked.map(i => QUESTIONS[i]);
   el.innerHTML = `
