@@ -122,6 +122,8 @@ tr:hover{background:#FAFBFF}
   <button class="tab" onclick="sw('list',this)">📋 質問一覧</button>
   <button class="tab" onclick="sw('qc',this)">✅ 品質チェック</button>
   <button class="tab" onclick="sw('test',this)">🎯 出題テスト</button>
+  <button class="tab" onclick="sw('qa',this)">📝 QA評価</button>
+  <button class="tab" onclick="sw('anl',this)">📈 分析</button>
   <button class="tab" onclick="sw('rt',this)">🏆 結果タイプ</button>
   <button class="tab" onclick="sw('cat',this)">🏷 カテゴリ</button>
 </div>
@@ -219,6 +221,56 @@ tr:hover{background:#FAFBFF}
 <div id="testResult" style="display:none"></div>
 </div>
 
+<!-- ===== QA EVALUATION ===== -->
+<div class="tp" id="p-qa">
+<div class="g4" id="qaStats"></div>
+<div style="height:14px"></div>
+<div class="cd" style="margin-bottom:14px">
+  <h3>📝 QA評価 — 条件を選んで質問を評価</h3>
+  <p style="font-size:12px;color:var(--s);margin-bottom:12px">テストモードと同じ条件で出題される質問を1問ずつ評価できます。評価結果はLocalStorageに保存されます。</p>
+  <div class="fr3">
+    <div class="fg"><label>コンテキスト</label><select class="fi" id="qaCtx" style="width:100%"><option value="work">職場</option><option value="family">家族</option><option value="school">学校</option><option value="friend">友人</option><option value="shared">共同生活</option></select></div>
+    <div class="fg"><label>私の立場</label><select class="fi" id="qaMy" style="width:100%"><option value="上司">上司</option><option value="部下">部下</option><option value="同僚">同僚</option><option value="親">親</option><option value="配偶者">配偶者</option><option value="先生">先生</option></select></div>
+    <div class="fg"><label>環境キーワード</label><input class="fi" id="qaEnv" value="飲食" style="width:100%"></div>
+  </div>
+  <button class="btn bp" onclick="startQA()">QA評価を開始</button>
+  <button class="btn bo" onclick="exportQAResults()" style="margin-left:6px">📥 QA結果CSV出力</button>
+</div>
+<div id="qaList"></div>
+</div>
+
+<!-- ===== ANALYSIS ===== -->
+<div class="tp" id="p-anl">
+<div class="g4" id="anlStats"></div>
+<div style="height:14px"></div>
+<div class="g2">
+  <div class="cd">
+    <h3>📊 出題カバレッジ</h3>
+    <p style="font-size:12px;color:var(--s);margin-bottom:10px">各環境・職種ごとの出題可能数</p>
+    <div id="anlCoverage"></div>
+  </div>
+  <div class="cd">
+    <h3>🔍 改善候補一覧</h3>
+    <p style="font-size:12px;color:var(--s);margin-bottom:10px">品質チェック＋QA評価に基づく優先順位</p>
+    <div id="anlImprovements"></div>
+  </div>
+</div>
+<div style="height:14px"></div>
+<div class="cd">
+  <h3>📈 セッション分析</h3>
+  <p style="font-size:12px;color:var(--s);margin-bottom:10px">公開サイトの利用状況（LocalStorageから読み取り）</p>
+  <div class="g4" id="anlSessions"></div>
+  <div style="height:10px"></div>
+  <div id="anlSessionDetail"></div>
+</div>
+<div style="height:14px"></div>
+<div class="cd">
+  <h3>📝 管理者メモ一覧</h3>
+  <p style="font-size:12px;color:var(--s);margin-bottom:10px">質問に付けたコメント・メモの一覧</p>
+  <div id="anlMemos"></div>
+</div>
+</div>
+
 <!-- ===== RESULT TYPES ===== -->
 <div class="tp" id="p-rt"><div id="rtCards"></div></div>
 
@@ -251,7 +303,7 @@ let RT=__RT__;let qcData=[];let testQs=[],testAns={},testIdx=0;
 
 function init(){const s=localStorage.getItem('bt_q3');Q=s?JSON.parse(s):__Q__;buildCF();render();renderDash();renderRT();renderCats();}
 function save(){localStorage.setItem('bt_q3',JSON.stringify(Q))}
-function sw(n,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));el.classList.add('on');$('p-'+n).classList.add('on');if(n==='dash')renderDash();if(n==='cat')renderCats();}
+function sw(n,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));el.classList.add('on');$('p-'+n).classList.add('on');if(n==='dash')renderDash();if(n==='cat')renderCats();if(n==='anl')renderAnalysis()}
 
 // ===== DASHBOARD =====
 function renderDash(){
@@ -488,6 +540,160 @@ function renderRT(){$('rtCards').innerHTML='<h2 style="font-size:16px;font-weigh
 function renderCats(){const cs={};Q.forEach(q=>{cs[q.category]=(cs[q.category]||0)+1});$('catList').innerHTML=Object.entries(cs).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b)"><span class="bd bd-c">${k}</span><span style="flex:1;font-size:13px;font-weight:600">${v}問</span><button class="btn bo bs" onclick="renCat('${k}')">名前変更</button></div>`).join('')}
 function addCat(){const n=$('newCat').value.trim();if(!n)return;$('newCat').value='';buildCF();renderCats();alert('「'+n+'」追加。質問追加時に選択可。')}
 function renCat(o){const n=prompt('新しい名前:',o);if(!n||n===o)return;Q.forEach(q=>{if(q.category===o)q.category=n});save();buildCF();render();renderCats()}
+
+// ===== QA EVALUATION =====
+let qaItems=[],qaEvals={};
+function loadQAData(){try{qaEvals=JSON.parse(localStorage.getItem('bt_qa')||'{}')}catch{qaEvals={}}}
+function saveQAData(){localStorage.setItem('bt_qa',JSON.stringify(qaEvals))}
+function startQA(){
+  loadQAData();
+  const ctx=$('qaCtx').value,my=$('qaMy').value,envKw=$('qaEnv').value;
+  const pool=Q.filter(q=>q.enabled&&q.status==='published');
+  const common=pool.filter(q=>q.scope==='common').slice(0,10);
+  const rel=pool.filter(q=>q.scope==='relationship'&&(q.context_group===ctx||q.context_group==='all')&&(q.my_role==='all'||q.my_role===my)).slice(0,10);
+  const env=pool.filter(q=>q.scope==='environment'&&q.environment!=='all'&&envKw.split(',').some(k=>q.environment.includes(k.trim()))).slice(0,10);
+  const extra=pool.filter(q=>!common.includes(q)&&!rel.includes(q)&&!env.includes(q)).sort(()=>Math.random()-.5).slice(0,5);
+  qaItems=[...common,...rel,...env,...extra];
+  // Stats
+  const evaluated=qaItems.filter(q=>qaEvals[q.id]).length;
+  $('qaStats').innerHTML=`<div class="st"><div class="n">${qaItems.length}</div><div class="l">出題対象</div></div><div class="st"><div class="n">${common.length}</div><div class="l">共通</div></div><div class="st"><div class="n">${rel.length}</div><div class="l">関係</div></div><div class="st"><div class="n">${env.length}</div><div class="l">環境</div></div>`;
+  renderQAList();
+}
+function renderQAList(){
+  const SRC={common:'共通',relationship:'関係',environment:'環境'};
+  const SRCCLR={common:'bd-c',relationship:'bd-sc',environment:'bd-x'};
+  const EVALS=['自然','曖昧','重複','不要'];
+  const ECLR={自然:'var(--green)',曖昧:'var(--orange)',重複:'var(--red)',不要:'#999'};
+  $('qaList').innerHTML=qaItems.map((q,i)=>{
+    const ev=qaEvals[q.id]||{};
+    const memo=ev.memo||'';
+    const rating=ev.rating||'';
+    return`<div class="cd" style="margin-bottom:8px;${rating==='不要'?'opacity:.5':''}">
+      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+        <span style="font-size:11px;color:var(--s);min-width:24px">${i+1}.</span>
+        <span class="bd ${SRCCLR[q.scope]||'bd-c'}">${SRC[q.scope]||q.scope}</span>
+        <span class="bd bd-c">${q.category}</span>
+        <code style="font-size:10px;color:var(--s);margin-left:auto">${q.id}</code>
+      </div>
+      <div style="font-size:14px;font-weight:600;line-height:1.6;margin-bottom:10px">${q.question}</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+        ${EVALS.map(e=>`<button class="btn bo bs" style="${rating===e?'background:'+ECLR[e]+';color:#fff;border-color:'+ECLR[e]:''}" onclick="rateQA('${q.id}','${e}',this)">${e}</button>`).join('')}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input class="fi" style="flex:1;font-size:12px;padding:6px 10px" placeholder="管理者メモ..." value="${memo.replace(/"/g,'&quot;')}" onchange="memoQA('${q.id}',this.value)">
+      </div>
+    </div>`}).join('');
+}
+function rateQA(id,rating,el){
+  if(!qaEvals[id])qaEvals[id]={};
+  qaEvals[id].rating=rating;qaEvals[id].date=new Date().toISOString();
+  saveQAData();renderQAList();
+}
+function memoQA(id,memo){
+  if(!qaEvals[id])qaEvals[id]={};
+  qaEvals[id].memo=memo;qaEvals[id].date=new Date().toISOString();
+  saveQAData();
+}
+function exportQAResults(){
+  loadQAData();
+  const rows=[['ID','質問文','カテゴリ','スコープ','評価','メモ','評価日']];
+  Q.forEach(q=>{const ev=qaEvals[q.id];if(ev)rows.push([q.id,q.question,q.category,q.scope,ev.rating||'',ev.memo||'',ev.date||''])});
+  const csv='\uFEFF'+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  dl(csv,'qa_results.csv','text/csv;charset=utf-8');
+}
+
+// ===== ANALYSIS =====
+function renderAnalysis(){
+  loadQAData();
+  const tot=Q.length,en=Q.filter(q=>q.enabled).length,pub=Q.filter(q=>q.status==='published').length;
+  const qaCount=Object.keys(qaEvals).length;
+  const rated=Object.values(qaEvals).filter(v=>v.rating);
+  const natural=rated.filter(v=>v.rating==='自然').length;
+  const ambig=rated.filter(v=>v.rating==='曖昧').length;
+  const dup=rated.filter(v=>v.rating==='重複').length;
+  const unnecessary=rated.filter(v=>v.rating==='不要').length;
+  const memos=Object.entries(qaEvals).filter(([k,v])=>v.memo);
+
+  $('anlStats').innerHTML=`
+    <div class="st"><div class="n">${tot}</div><div class="l">総質問数</div></div>
+    <div class="st"><div class="n">${qaCount}</div><div class="l">QA評価済</div></div>
+    <div class="st"><div class="n" style="color:var(--green)">${natural}</div><div class="l">自然</div></div>
+    <div class="st"><div class="n" style="color:var(--orange)">${ambig+dup+unnecessary}</div><div class="l">要改善</div></div>`;
+
+  // Coverage analysis
+  const envKws=['飲食','接客','オフィス','工場','医療','IT','美容','建設','物流','教育','保育','介護','家庭'];
+  const coverage=envKws.map(kw=>{
+    const count=Q.filter(q=>q.enabled&&q.status==='published'&&q.environment!=='all'&&q.environment.includes(kw)).length;
+    return{kw,count};
+  }).sort((a,b)=>b.count-a.count);
+  const maxCov=Math.max(...coverage.map(c=>c.count),1);
+  $('anlCoverage').innerHTML=coverage.map(c=>`<div class="bar-r"><span class="bar-l">${c.kw}</span><div class="bar-t"><div class="bar-f" style="width:${c.count/maxCov*100}%;background:${c.count<5?'var(--red)':c.count<10?'var(--orange)':'var(--green)'}"></div></div><span class="bar-v">${c.count}</span></div>`).join('');
+
+  // Improvement candidates (priority order)
+  const improvements=[];
+  // 1. QA rated as ambiguous/duplicate/unnecessary
+  rated.filter(v=>v.rating!=='自然').forEach(v=>{
+    const qid=Object.entries(qaEvals).find(([k,val])=>val===v);
+  });
+  Object.entries(qaEvals).forEach(([id,ev])=>{
+    if(ev.rating&&ev.rating!=='自然'){
+      const q=Q.find(x=>x.id===id);
+      if(q)improvements.push({id,question:q.question.slice(0,40),reason:ev.rating,memo:ev.memo||'',priority:ev.rating==='不要'?1:ev.rating==='重複'?2:3});
+    }
+  });
+  // 2. Low coverage environments
+  coverage.filter(c=>c.count<5).forEach(c=>{
+    improvements.push({id:'-',question:`「${c.kw}」の質問が${c.count}問しかない`,reason:'カバレッジ不足',memo:'',priority:2});
+  });
+  // 3. Long questions
+  Q.filter(q=>q.question.length>60).forEach(q=>{
+    if(!improvements.find(x=>x.id===q.id))
+      improvements.push({id:q.id,question:q.question.slice(0,40),reason:'長文',memo:'',priority:4});
+  });
+  improvements.sort((a,b)=>a.priority-b.priority);
+  const PCLR={1:'var(--red)',2:'var(--orange)',3:'var(--orange)',4:'var(--s)'};
+  const PLBL={1:'🔴 高',2:'🟠 中',3:'🟡 低',4:'⚪ 参考'};
+  $('anlImprovements').innerHTML=improvements.length?improvements.slice(0,30).map(imp=>`
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--b);font-size:12px">
+      <span style="color:${PCLR[imp.priority]};min-width:50px;font-weight:700">${PLBL[imp.priority]}</span>
+      <span style="min-width:60px;color:var(--s)">${imp.reason}</span>
+      <span style="flex:1">${imp.question}...</span>
+      <code style="font-size:10px;color:var(--s)">${imp.id}</code>
+    </div>`).join(''):'<p style="text-align:center;color:var(--s);padding:20px">改善候補なし 🎉</p>';
+
+  // Session analysis (from public site localStorage)
+  let sessions=[];
+  try{sessions=JSON.parse(localStorage.getItem('bp_history')||'[]')}catch{}
+  const totalSessions=sessions.length;
+  const completed=sessions.filter(s=>s.count>=20).length;
+  const avgCount=totalSessions?Math.round(sessions.reduce((a,s)=>a+(s.count||0),0)/totalSessions):0;
+  const completionRate=totalSessions?Math.round(completed/totalSessions*100):0;
+  const dropoutRate=totalSessions?100-completionRate:0;
+
+  $('anlSessions').innerHTML=`
+    <div class="st"><div class="n">${totalSessions}</div><div class="l">総セッション</div></div>
+    <div class="st"><div class="n">${completionRate}%</div><div class="l">完了率</div></div>
+    <div class="st"><div class="n">${dropoutRate}%</div><div class="l">離脱率</div></div>
+    <div class="st"><div class="n">${avgCount}</div><div class="l">平均回答数</div></div>`;
+
+  if(totalSessions>0){
+    const byType={};sessions.forEach(s=>{if(s.type)byType[s.type]=(byType[s.type]||0)+1});
+    const maxT=Math.max(...Object.values(byType),1);
+    $('anlSessionDetail').innerHTML='<h3 style="font-size:13px;font-weight:700;margin-bottom:8px">結果タイプ分布</h3>'+
+      Object.entries(byType).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<div class="bar-r"><span class="bar-l" style="width:120px">${t}</span><div class="bar-t"><div class="bar-f" style="width:${n/maxT*100}%;background:var(--purple)"></div></div><span class="bar-v">${n}</span></div>`).join('');
+  }else{
+    $('anlSessionDetail').innerHTML='<p style="font-size:12px;color:var(--s);text-align:center;padding:16px">公開サイトの利用データがまだありません</p>';
+  }
+
+  // Memos
+  $('anlMemos').innerHTML=memos.length?memos.map(([id,ev])=>{
+    const q=Q.find(x=>x.id===id);
+    return`<div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--b);font-size:12px">
+      <code style="min-width:80px;color:var(--s)">${id}</code>
+      <span style="flex:1">${q?q.question.slice(0,35)+'...':'-'}</span>
+      <span style="color:var(--blue);font-weight:600">💬 ${ev.memo}</span>
+    </div>`}).join(''):'<p style="font-size:12px;color:var(--s);text-align:center;padding:16px">メモはまだありません</p>';
+}
 
 // ===== CSV/JSON =====
 function exportCSV(){const h=['id','question','category','subcategory','scope','context_group','my_role','target_role','environment','weight','status','enabled'];const r=Q.map(q=>h.map(k=>{let v=q[k];if(typeof v==='string'&&(v.includes(',')||v.includes('"')))v='"'+v.replace(/"/g,'""')+'"';return v}).join(','));dl('\uFEFF'+h.join(',')+'\n'+r.join('\n'),'questions.csv','text/csv;charset=utf-8')}
