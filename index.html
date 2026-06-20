@@ -169,7 +169,7 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--t);l
   <img src="IMG_0500.png" alt="" onerror="this.parentElement.innerHTML='<div style=padding:40px;text-align:center;color:#6B7280;font-size:13px>メイン画像</div>'">
 </section>
 <div style="padding:32px 24px 0">
-  <div class="sec-t">まずは、あなたの立場と<br>相手を選んでください</div>
+  <div class="sec-t">相手との関係を<br>選んでください</div>
   <div class="sec-s">関係や環境によって、接し方のヒントは変わります。</div>
 </div>
 <div class="cards" style="padding-bottom:120px">
@@ -184,20 +184,29 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--t);l
 <div class="cta-wrap"><div class="cta-in"><button class="btn btn-p" onclick="goStep1('work')">無料でチェックする <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
 </div>
 
-<!-- ===== SCREEN: STEP2 (相手の立場) ===== -->
+<!-- ===== SCREEN: STEP2 (あなたの立場) ===== -->
 <div class="scr" id="s-step2">
-<div class="shdr"><div class="shdr-in"><div class="shdr-top"><button class="bk" onclick="go('s-top')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>戻る</button><span style="font-size:12px;color:var(--s)">STEP 1 / 3</span><button class="sv" onclick="saveProg()">保存</button></div><div class="prg"><div class="prg-s cur"></div><div class="prg-s"></div><div class="prg-s"></div></div></div></div>
+<div class="shdr"><div class="shdr-in"><div class="shdr-top"><button class="bk" onclick="go('s-top')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>戻る</button><span style="font-size:12px;color:var(--s)">STEP 1 / 4</span><button class="sv" onclick="saveProg()">保存</button></div><div class="prg"><div class="prg-s cur"></div><div class="prg-s"></div><div class="prg-s"></div><div class="prg-s"></div></div></div></div>
 <div style="padding:88px 0 120px">
-  <div class="steps" id="stepDots1"></div>
-  <div class="sec" style="margin-bottom:16px"><div class="sec-t">相手はどの立場ですか？</div><div class="sec-s" id="step2Sub">選択してください</div></div>
+  <div class="sec" style="margin-bottom:16px"><div class="sec-t">あなたの立場を<br>教えてください</div><div class="sec-s" id="step2Sub">選択してください</div></div>
   <div class="cards" id="step2Cards"></div>
+</div>
+<div class="cta-wrap"><div class="cta-in"><button class="btn btn-p" onclick="goStep2b()">次へ進む <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
+</div>
+
+<!-- ===== SCREEN: STEP2b (相手の立場) ===== -->
+<div class="scr" id="s-step2b">
+<div class="shdr"><div class="shdr-in"><div class="shdr-top"><button class="bk" onclick="go('s-step2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>戻る</button><span style="font-size:12px;color:var(--s)">STEP 2 / 4</span><button class="sv" onclick="saveProg()">保存</button></div><div class="prg"><div class="prg-s done"></div><div class="prg-s cur"></div><div class="prg-s"></div><div class="prg-s"></div></div></div></div>
+<div style="padding:88px 0 120px">
+  <div class="sec" style="margin-bottom:16px"><div class="sec-t">相手の立場を<br>教えてください</div><div class="sec-s" id="step2bSub">選択してください</div></div>
+  <div class="cards" id="step2bCards"></div>
 </div>
 <div class="cta-wrap"><div class="cta-in"><button class="btn btn-p" onclick="goStep3()">次へ進む <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div></div>
 </div>
 
 <!-- ===== SCREEN: STEP3 (環境→職種) ===== -->
 <div class="scr" id="s-step3">
-<div class="shdr"><div class="shdr-in"><div class="shdr-top"><button class="bk" onclick="go('s-step2')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>戻る</button><span style="font-size:12px;color:var(--s)">STEP 2 / 3</span><button class="sv" onclick="saveProg()">保存</button></div><div class="prg"><div class="prg-s done"></div><div class="prg-s cur"></div><div class="prg-s"></div></div></div></div>
+<div class="shdr"><div class="shdr-in"><div class="shdr-top"><button class="bk" onclick="go('s-step2b')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>戻る</button><span style="font-size:12px;color:var(--s)">STEP 3 / 4</span><button class="sv" onclick="saveProg()">保存</button></div><div class="prg"><div class="prg-s done"></div><div class="prg-s done"></div><div class="prg-s cur"></div><div class="prg-s"></div></div></div></div>
 <div style="padding:88px 0 120px">
   <div class="sec" style="margin-bottom:12px"><div class="sec-t" id="s3Title">どんな環境ですか？</div><div class="sec-s" id="s3Sub">相手が働いている・過ごしている環境を選んでください</div></div>
   <div id="envArea"></div>
@@ -251,33 +260,35 @@ let S={ctx:'',role:'',envId:'',envName:'',occId:'',occName:'',occKw:[]},qList=[]
 // ===== NAV =====
 function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0)}
 
-// ===== STEP 1 → STEP 2 =====
+// ===== STEP 1: 関係カテゴリ選択 → あなたの立場 =====
 function goStep1(ctx){
-  S.ctx=ctx;S.role='';S.envId='';S.occId='';
+  S.ctx=ctx;S.myRole='';S.role='';S.envId='';S.occId='';
   const rels=RELS[ctx]||[];
   const colors=['c-blue','c-green','c-orange','c-purple','c-pink','c-brown'];
-  document.getElementById('step2Sub').textContent=CXL[ctx]+'での相手を選んでください';
-  document.getElementById('step2Cards').innerHTML=rels.map((r,i)=>`<div class="card ${colors[i%6]}" onclick="selRole(this,'${r}')"><div class="card-i">👤</div><div class="card-t"><h3>${r}</h3></div><div class="card-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div></div>`).join('');
+  document.getElementById('step2Sub').textContent=CXL[ctx]+'でのあなたの立場を選んでください';
+  document.getElementById('step2Cards').innerHTML=rels.map((r,i)=>`<div class="card ${colors[i%6]}" onclick="selMyRole(this,'${r}')"><div class="card-i">🙋</div><div class="card-t"><h3>${r}</h3></div><div class="card-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div></div>`).join('');
   go('s-step2');
 }
-function selRole(el,role){
-  S.role=role;
-  // 相手の立場から私の立場を推定（関係キー構築用）
-  S.myRole=inferMyRole(S.ctx,role);
+function selMyRole(el,role){
+  S.myRole=role;
   el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));
   el.classList.add('sel');
 }
-// 相手の立場 → 私の立場の対応（観察者視点を確定）
-function inferMyRole(ctx,targetRole){
-  const MAP={
-    'work:部下':'上司','work:上司':'部下','work:同僚':'同僚','work:取引先':'同僚','work:派遣・パート':'上司',
-    'family:子ども':'親','family:親':'子ども','family:配偶者':'配偶者','family:兄弟・姉妹':'兄弟・姉妹','family:義父母':'配偶者','family:親戚':'親戚',
-    'school:生徒':'先生','school:先生':'生徒','school:先輩':'後輩','school:後輩':'先輩','school:クラスメイト':'クラスメイト',
-    'friend:友人':'友人','friend:近所の人':'近所の人','friend:趣味仲間':'趣味仲間','friend:ママ友・パパ友':'ママ友・パパ友',
-    'service:お客様':'スタッフ','service:取引先':'担当者','service:利用者':'スタッフ','service:患者':'スタッフ','service:保護者':'スタッフ',
-    'shared:ルームメイト':'ルームメイト','shared:シェアハウス仲間':'シェアハウス仲間','shared:施設の同居者':'同居者'
-  };
-  return MAP[`${ctx}:${targetRole}`]||'';
+
+// ===== STEP 2b: 相手の立場選択 =====
+function goStep2b(){
+  if(!S.myRole){toast('あなたの立場を選択してください');return}
+  S.role='';
+  const rels=RELS[S.ctx]||[];
+  const colors=['c-blue','c-green','c-orange','c-purple','c-pink','c-brown'];
+  document.getElementById('step2bSub').textContent='相手の立場を選んでください';
+  document.getElementById('step2bCards').innerHTML=rels.map((r,i)=>`<div class="card ${colors[i%6]}" onclick="selRole(this,'${r}')"><div class="card-i">👤</div><div class="card-t"><h3>${r}</h3></div><div class="card-a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div></div>`).join('');
+  go('s-step2b');
+}
+function selRole(el,role){
+  S.role=role;
+  el.parentElement.querySelectorAll('.card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
 // ===== STEP 3: ENV → OCC =====
