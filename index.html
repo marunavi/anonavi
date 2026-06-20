@@ -246,7 +246,7 @@ const RELS={work:['上司','部下','同僚','取引先','派遣・パート'],f
 const CXL={work:'職場',family:'家族',school:'学校',friend:'友人',service:'サービス',shared:'共同生活'};
 
 // ===== STATE =====
-let S={ctx:'',role:'',envId:'',envName:'',occId:'',occName:'',occKw:[]},qList=[],qAns={},qImprove={},qFreq={},qIdx=0,qStage='behavior';
+let S={ctx:'',role:'',envId:'',envName:'',occId:'',occName:'',occKw:[]},qList=[],qAns={},qConf={},qImprove={},qIdx=0,qStage='behavior';
 
 // ===== NAV =====
 function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0)}
@@ -357,7 +357,7 @@ function goQuestions(){
   // IDが重複しないよう接頭辞付与
   qList=qList.map((q,i)=>({...q,i:q.i+'_'+i}));
 
-  qAns={};qImprove={};qFreq={};qIdx=0;qStage='behavior';
+  qAns={};qConf={};qImprove={};qIdx=0;qStage='behavior';
   go('s-questions');renderQ();
 }
 // 私の立場をコンテキストから推定（STEP1で選んだものを保持）
@@ -369,27 +369,36 @@ function myRoleFromCtx(){
 // ===== QUESTION UI =====
 function renderQ(){
   const q=qList[qIdx],total=qList.length;
-  // Progress: count completed questions
-  document.getElementById('qProg').style.width=((qIdx+(qStage==='behavior'?0:qStage==='improve'?0.5:0.8))/total*100)+'%';
+  const stageNum=qStage==='behavior'?0:qStage==='confidence'?0.4:0.7;
+  document.getElementById('qProg').style.width=((qIdx+stageNum)/total*100)+'%';
   document.getElementById('qCount').textContent=`${qIdx+1} / ${total}`;
 
-  // Determine if this question has improve/freq stages
   const hasImprove=q.iq&&q.io&&q.io.length>0;
 
   let stageLabel='',qText='',opts=[],curAns='',stageFn='';
   if(qStage==='behavior'){
-    stageLabel='行動の確認';qText=q.q;opts=q.ao;curAns=qAns[q.i]||'';stageFn='ansBehavior';
-  }else if(qStage==='improve'&&hasImprove){
-    stageLabel='環境で変わるか';qText=q.iq;opts=q.io;curAns=qImprove[q.i]||'';stageFn='ansImprove';
+    // ①発生: 行動の有無
+    stageLabel='行動の確認';qText=q.q;
+    opts=['かなり当てはまる','少し当てはまる','あまりない','わからない'];
+    curAns=qAns[q.i]||'';stageFn='ansBehavior';
+  }else if(qStage==='confidence'){
+    // ②観察確信度
+    stageLabel='観察の確信度';qText='その印象は、どの程度確信がありますか？';
+    opts=['繰り返し見ている','複数の場面で見た','数回だけ','推測に近い'];
+    curAns=qConf[q.i]||'';stageFn='ansConf';
   }else{
-    stageLabel='どれくらいの頻度ですか';qText='その様子は、どれくらいの頻度で見られますか？';opts=q.fo;curAns=qFreq[q.i]||'';stageFn='ansFreq';
+    // ③環境変化
+    stageLabel='環境で変わるか';
+    qText=hasImprove?q.iq:'環境や伝え方を変えると、変化がありますか？';
+    opts=['かなり変わる','少し変わる','変わらない','試したことがない'];
+    curAns=qImprove[q.i]||'';stageFn='ansImprove';
   }
 
   const isLast=qIdx===total-1;
   let btnLabel='次へ →';
   if(qStage==='behavior'){
-    btnLabel=(curAns==='ほぼない')?(isLast?'結果を見る':'次へ →'):'続けて確認';
-  }else if(qStage==='improve'){
+    btnLabel=(curAns==='あまりない'||curAns==='わからない')?(isLast?'結果を見る':'次へ →'):'続けて確認';
+  }else if(qStage==='confidence'){
     btnLabel='次へ →';
   }else{
     btnLabel=isLast?'結果を見る':'次へ →';
@@ -402,30 +411,27 @@ function renderQ(){
     <div class="q-text">${qText}</div>
     <div class="q-opts">
       ${opts.map(o=>`<div class="q-opt ${curAns===o?'sel':''}" onclick="${stageFn}('${q.i}','${o}',this)">${o}</div>`).join('')}
-      ${qStage==='behavior'?`<div class="q-opt ${curAns==='わからない'?'sel':''}" onclick="${stageFn}('${q.i}','わからない',this)">わからない</div>`:''}
     </div>`;
 }
 function ansBehavior(id,val,el){qAns[id]=val;el.parentElement.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel')}
+function ansConf(id,val,el){qConf[id]=val;el.parentElement.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel')}
 function ansImprove(id,val,el){qImprove[id]=val;el.parentElement.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel')}
-function ansFreq(id,val,el){qFreq[id]=val;el.parentElement.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel')}
 
 function nextQ(){
   const q=qList[qIdx];
-  const hasImprove=q.iq&&q.io&&q.io.length>0;
   if(qStage==='behavior'){
     if(!qAns[q.i]){toast('回答を選択してください');return}
-    // 「ほぼない」「わからない」なら深掘りせず次の質問へ
-    if(qAns[q.i]==='ほぼない'||qAns[q.i]==='わからない'){
+    // 「あまりない」「わからない」→ ②③をスキップ
+    if(qAns[q.i]==='あまりない'||qAns[q.i]==='わからない'){
       advanceQuestion();return;
     }
-    // 改善質問があれば improve へ、なければ freq へ
-    if(hasImprove){qStage='improve';renderQ();window.scrollTo(0,0)}
-    else{qStage='freq';renderQ();window.scrollTo(0,0)}
-  }else if(qStage==='improve'){
-    if(!qImprove[q.i]){toast('回答を選択してください');return}
-    qStage='freq';renderQ();window.scrollTo(0,0);
+    // 「かなり当てはまる」「少し当てはまる」→ ②観察確信度へ
+    qStage='confidence';renderQ();window.scrollTo(0,0);
+  }else if(qStage==='confidence'){
+    if(!qConf[q.i]){toast('回答を選択してください');return}
+    qStage='improve';renderQ();window.scrollTo(0,0);
   }else{
-    if(!qFreq[q.i]){toast('回答を選択してください');return}
+    if(!qImprove[q.i]){toast('回答を選択してください');return}
     advanceQuestion();
   }
 }
@@ -435,8 +441,8 @@ function advanceQuestion(){
   else showResult();
 }
 function prevQ(){
-  if(qStage==='freq'){const q=qList[qIdx];qStage=(q.iq&&q.io.length>0)?'improve':'behavior';renderQ();return}
-  if(qStage==='improve'){qStage='behavior';renderQ();return}
+  if(qStage==='improve'){qStage='confidence';renderQ();return}
+  if(qStage==='confidence'){qStage='behavior';renderQ();return}
   if(qIdx>0){qIdx--;qStage='behavior';renderQ();window.scrollTo(0,0)}
   else go('s-step3');
 }
@@ -455,37 +461,40 @@ function showResult(){
   qList.forEach(q=>{
     const a=qAns[q.i];if(!a)return;
     const ax=q.ax||'exec';
-    // ポジティブ質問は逆スコア
+    // ①発生: 行動の有無（新選択肢）
     let val=0;
     if(q.pol==='pos'){
-      // できる系：よくある=低負荷（軸スコア低）
-      val=a==='よくある'?0:a==='少しある'?1:a==='ほぼない'?2:0;
+      // できる系（逆質問）：当てはまる=低負荷
+      val=a==='かなり当てはまる'?0:a==='少し当てはまる'?1:a==='あまりない'?2:0;
     }else{
-      val=a==='よくある'?2:a==='少しある'?1:0; // ほぼない・わからない=0
+      val=a==='かなり当てはまる'?2:a==='少し当てはまる'?1:0; // あまりない・わからない=0
     }
-    if(a==='わからない'){return}
+    if(a==='わからない'||a==='あまりない'){return} // ②③スキップ分は加点なし
 
-    // 頻度で重み調整
-    const freq=qFreq[q.i];
-    let freqMult=1;
-    if(freq==='いつも')freqMult=1.3;else if(freq==='よくある')freqMult=1.1;else if(freq==='たまに')freqMult=0.8;else if(freq==='ほぼない')freqMult=0.5;
+    // ②観察確信度で重み調整（スコア精度）
+    const conf=qConf[q.i];
+    let confMult=0.5;
+    if(conf==='繰り返し見ている')confMult=1.0;
+    else if(conf==='複数の場面で見た')confMult=0.8;
+    else if(conf==='数回だけ')confMult=0.5;
+    else if(conf==='推測に近い')confMult=0.2;
 
-    const finalVal=val*freqMult;
+    const finalVal=val*confMult;
     axisScore[ax]+=finalVal;
     axisMax[ax]+=2;
 
-    // 結果タイプスコア
+    // 結果タイプスコア（確信度で重み付け）
     const rm=q.rm||{};
-    for(const[t,w] of Object.entries(rm))typeScore[t]=(typeScore[t]||0)+w*(val/2);
+    for(const[t,w] of Object.entries(rm))typeScore[t]=(typeScore[t]||0)+w*(val/2)*confMult;
 
-    // 環境影響（改善質問の回答）
+    // ③環境変化（環境影響の算出）
     const imp=qImprove[q.i];
-    if(imp){
+    if(imp&&imp!=='試したことがない'){
       envInfluenceMax+=2;
-      if(imp==='かなり改善')envInfluence+=2;else if(imp==='少し改善')envInfluence+=1;
+      if(imp==='かなり変わる')envInfluence+=2;else if(imp==='少し変わる')envInfluence+=1;
     }
-    // 負荷時変動（感情・感覚軸の高スコア = 負荷で変動しやすい）
-    if(ax==='emotion'||ax==='sensory'){loadVarMax+=2;loadVariation+=val}
+    // 負荷時変動（感情・感覚軸）
+    if(ax==='emotion'||ax==='sensory'){loadVarMax+=2;loadVariation+=finalVal}
   });
 
   // 主傾向・副傾向
@@ -599,10 +608,10 @@ function saveResult(){
 
 // ===== SAVE/LOAD =====
 function saveProg(){
-  try{localStorage.setItem('bp_save',JSON.stringify({S,qList,qAns,qIdx}));toast('保存しました')}catch{toast('保存に失敗しました')}
+  try{localStorage.setItem('bp_save',JSON.stringify({S,qList,qAns,qConf,qImprove,qIdx,qStage}));toast('保存しました')}catch{toast('保存に失敗しました')}
 }
 function loadProg(){
-  try{const d=JSON.parse(localStorage.getItem('bp_save'));if(d){Object.assign(S,d.S);qList=d.qList;qAns=d.qAns;qIdx=d.qIdx;go('s-questions');renderQ();return true}}catch{}return false;
+  try{const d=JSON.parse(localStorage.getItem('bp_save'));if(d){Object.assign(S,d.S);qList=d.qList;qAns=d.qAns||{};qConf=d.qConf||{};qImprove=d.qImprove||{};qIdx=d.qIdx;qStage=d.qStage||'behavior';go('s-questions');renderQ();return true}}catch{}return false;
 }
 
 // ===== TOAST =====
