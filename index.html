@@ -229,6 +229,14 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--t);l
 .char-tag{font-size:11px;color:var(--s);font-weight:400}
 .char-d{font-size:12px;color:#374151;line-height:1.7}
 .char-link{font-size:12px;color:#3D78F2;font-weight:600;margin-top:8px;text-align:right}
+.char-block{margin-top:12px;padding-top:12px;border-top:1px solid #E8EBF0}
+.char-block:first-of-type{margin-top:12px}
+.char-bh{font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.char-bi{display:inline-flex;width:22px;height:22px;border-radius:7px;align-items:center;justify-content:center;font-size:12px}
+.char-bi.feat{background:#EEF3FF}.char-bi.sup{background:#E8F5EC}
+.char-li{font-size:12px;color:#374151;line-height:1.65;display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;padding-left:2px}
+.char-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.char-dot.feat{background:#3D78F2}.char-dot.sup{background:#2A9D4A}
 .ph-mind{background:linear-gradient(135deg,#F4F8FF,#fff)}
 .caution{background:#FFF8F0;border:1px solid #FCE6C8}
 .res-sec .sec-note{font-size:12px;color:var(--s);margin-bottom:12px;line-height:1.7}
@@ -981,16 +989,32 @@ function showDetail(){
 
 // ===== フェーズ詳細ガイド（画像2）=====
 function showPhase(kind,id){
-  // curRefs から該当する細分化特性を表示
+  // curRefs から該当する細分化特性を表示（その場で展開）
   const refItems=(curRefs&&curRefs.length?curRefs:[]).slice(0,3);
-  const refHtml=refItems.length?refItems.map(r=>`
+  const buildCard=(name,tag,desc,features,support)=>`
     <div class="char-card">
-      <div class="char-t">${r.relate?r.relate.split('（')[0]:'行動の特性'}<span class="char-tag">${r.relate&&r.relate.includes('（')?'（'+r.relate.split('（')[1]:''}</span></div>
-      <div class="char-d">${r.detail||r.text}</div>
-      <div class="char-link" onclick="event.stopPropagation()">詳しく見る ›</div>
-    </div>`).join(''):`
-    <div class="char-card"><div class="char-t">注意のコントロールの特性<span class="char-tag">（ADHDに関連）</span></div><div class="char-d">集中の持続や切り替え、忘れ物、衝動的な行動などにつまずきが出やすい傾向があります。<br><span style="color:var(--s);font-size:12px">例：締切が近いと集中できる／気が散りやすい／順序立てが苦手 など</span></div></div>
-    <div class="char-card"><div class="char-t">対人コミュニケーションの特性<span class="char-tag">（ASDに関連）</span></div><div class="char-d">言葉のやり取りや場の空気の読み取り、こだわりの強さなどに特徴が見られることがあります。<br><span style="color:var(--s);font-size:12px">例：冗談が伝わりにくい／予定変更が苦手／同じやり方を好む など</span></div></div>`;
+      <div class="char-t">${name}${tag?`<span class="char-tag">${tag}</span>`:''}</div>
+      <div class="char-d">${desc}</div>
+      ${features&&features.length?`<div class="char-block">
+        <div class="char-bh"><span class="char-bi feat">📌</span>こんな特徴が見られることがあります</div>
+        ${features.map(f=>`<div class="char-li"><span class="char-dot feat"></span>${f}</div>`).join('')}
+      </div>`:''}
+      ${support&&support.length?`<div class="char-block">
+        <div class="char-bh"><span class="char-bi sup">🤝</span>接し方のヒント</div>
+        ${support.map(s=>`<div class="char-li"><span class="char-dot sup"></span>${s}</div>`).join('')}
+      </div>`:''}
+    </div>`;
+  const refHtml=refItems.length?refItems.map(r=>{
+    const name=r.relate?r.relate.split('（')[0]:'行動の特性';
+    const tag=r.relate&&r.relate.includes('（')?'（'+r.relate.split('（')[1]:'';
+    return buildCard(name,tag,r.detail||r.text,r.features,r.support);
+  }).join(''):
+    buildCard('注意のコントロールの特性','（ADHDに関連）','集中の持続や切り替え、忘れ物、衝動的な行動などにつまずきが出やすい傾向があります。',
+      ['集中の持続や切り替えが難しいことがある','忘れ物やうっかりミスが起きやすいことがある','興味のあることには強く集中できることがある'],
+      ['やることを一つずつ、短く区切って伝える','チェック表やリマインダーで抜けを防ぐ','できたことを具体的に認める'])
+    +buildCard('対人コミュニケーションの特性','（ASDに関連）','言葉のやり取りや場の空気の読み取り、こだわりの強さなどに特徴が見られることがあります。',
+      ['相手の言葉の裏の意図を読み取りにくいことがある','予定の変更や見通しの立たない状況が苦手なことがある','興味や手順への強いこだわりが見られることがある'],
+      ['伝えたいことは具体的な言葉ではっきりと','予定や変更は早めに、見通しを添えて共有','本人のこだわりやペースを尊重する']);
 
   document.getElementById('phaseArea').innerHTML=`
     <div class="ph-hero">
