@@ -53,6 +53,27 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--t);l
 .hero p{font-size:14px;color:var(--s);line-height:1.8;margin-bottom:24px}
 .hero-img{margin:0 -24px;background:linear-gradient(135deg,var(--pl),#d4e4ff);overflow:hidden;position:relative;padding-bottom:100%}
 .hero-img img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+/* バリュー紹介セクション */
+.vp-sec{margin:0 -24px;padding:28px 18px;background:#fff}
+.vp-title{font-size:17px;font-weight:800;text-align:center;line-height:1.6;margin-bottom:22px;color:#1F2937}
+.vp-flow{display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:20px}
+.vp-bubble{flex:1;min-width:0;background:#F4F7FF;border-radius:18px;padding:14px 10px}
+.vp-bubble.hint{background:#EFF8F1}
+.vp-bh{font-size:12px;font-weight:800;color:#3D78F2;text-align:center;margin-bottom:10px}
+.vp-bh.hint{color:#2A9D4A}
+.vp-li{font-size:11px;line-height:1.5;margin-bottom:8px;display:flex;gap:4px;align-items:flex-start;color:#374151}
+.vp-cb{color:#3D78F2;font-weight:700;flex-shrink:0}
+.vp-cg{color:#2A9D4A;font-weight:700;flex-shrink:0}
+.vp-center{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:64px}
+.vp-person{width:54px;height:auto;margin:2px 0}
+.vp-arrow{font-size:16px;font-weight:700}
+.vp-arrow.b{color:#3D78F2}.vp-arrow.g{color:#7CC49A}
+.vp-scenes{display:flex;align-items:flex-start;justify-content:center;gap:2px;background:#FAFBFC;border-radius:16px;padding:14px 8px;margin-bottom:14px}
+.vp-scene{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
+.vp-sic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.vp-sl{font-size:9px;color:#4B5563;text-align:center;line-height:1.3;font-weight:600}
+.vp-sarrow{color:#C4C9D2;font-size:11px;align-self:center;margin-top:14px;flex-shrink:0}
+.vp-foot{text-align:center;font-size:13px;font-weight:700;color:#1F2937}
 
 /* Buttons */
 .cta-wrap{position:fixed;bottom:0;left:0;right:0;z-index:40;background:linear-gradient(transparent,var(--bg) 30%);padding:16px 24px 28px}
@@ -253,6 +274,54 @@ body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--t);l
 <section class="hero-img">
   <img src="IMG_0500.png" alt="" onerror="this.parentElement.innerHTML='<div style=padding:40px;text-align:center;color:#6B7280;font-size:13px>メイン画像</div>'">
 </section>
+
+<!-- バリュー紹介セクション -->
+<section class="vp-sec">
+  <h2 class="vp-title">相手の「行動の理由」を理解し、<br>より良い関わり方を見つけるサイトです</h2>
+  <div class="vp-flow">
+    <div class="vp-bubble worry">
+      <div class="vp-bh">よくある悩み</div>
+      <div class="vp-li"><span class="vp-cb">✓</span>指示が伝わりにくい</div>
+      <div class="vp-li"><span class="vp-cb">✓</span>ミスや抜けが多い</div>
+      <div class="vp-li"><span class="vp-cb">✓</span>こだわりが強く見える</div>
+      <div class="vp-li"><span class="vp-cb">✓</span>感情の起伏が気になる</div>
+    </div>
+    <div class="vp-center">
+      <div class="vp-arrow b">→</div>
+      <svg class="vp-person" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 44 q-2 -22 20 -22 q22 0 20 22 q0 6 -3 9 q1 6 -2 9 q-6 8 -15 8 q-9 0 -15 -8 q-3 -3 -2 -9 q-3 -3 -3 -9z" fill="#5a4a3f"/>
+        <ellipse cx="50" cy="48" rx="16" ry="18" fill="#F5D9BE"/>
+        <path d="M34 40 q-3 -20 16 -20 q19 0 16 20 q-4 -8 -16 -8 q-12 0 -16 8z" fill="#5a4a3f"/>
+        <circle cx="43" cy="48" r="2.2" fill="#3a3a3a"/><circle cx="57" cy="48" r="2.2" fill="#3a3a3a"/>
+        <path d="M46 56 q4 3 8 0" stroke="#c9a18a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M40 70 q10 8 20 0 l8 6 q6 5 6 16 v22 h-48 v-22 q0 -11 6 -16z" fill="#B8BCC4"/>
+        <path d="M50 66 q-4 8 -2 18 q1 5 6 6" fill="none" stroke="#F5D9BE" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="54" cy="90" r="5" fill="#F5D9BE"/>
+      </svg>
+      <div class="vp-arrow g">→</div>
+    </div>
+    <div class="vp-bubble hint">
+      <div class="vp-bh hint">ヒントが見つかる！</div>
+      <div class="vp-li"><span class="vp-cg">✓</span>特性の理解が深まる</div>
+      <div class="vp-li"><span class="vp-cg">✓</span>伝え方・接し方がわかる</div>
+      <div class="vp-li"><span class="vp-cg">✓</span>環境の工夫ができる</div>
+      <div class="vp-li"><span class="vp-cg">✓</span>関係がスムーズになる</div>
+    </div>
+  </div>
+  <div class="vp-scenes">
+    <div class="vp-scene"><div class="vp-sic" style="background:#EEF3FF">💼</div><div class="vp-sl">職場・アルバイト</div></div>
+    <div class="vp-sarrow">→</div>
+    <div class="vp-scene"><div class="vp-sic" style="background:#E8F5EC">🏠</div><div class="vp-sl">家族・親族</div></div>
+    <div class="vp-sarrow">→</div>
+    <div class="vp-scene"><div class="vp-sic" style="background:#FEF3E0">🏫</div><div class="vp-sl">学校・教育</div></div>
+    <div class="vp-sarrow">→</div>
+    <div class="vp-scene"><div class="vp-sic" style="background:#F3EEFB">🏥</div><div class="vp-sl">医療・福祉</div></div>
+    <div class="vp-sarrow">→</div>
+    <div class="vp-scene"><div class="vp-sic" style="background:#EEF3FF">💻</div><div class="vp-sl">IT・エンジニア</div></div>
+  </div>
+  <div class="vp-foot">さまざまな場面で活用できます</div>
+</section>
+
 <div style="padding:32px 24px 0">
   <div class="sec-t">相手との関係を<br>選んでください</div>
   <div class="sec-s">関係や環境によって、接し方のヒントは変わります。</div>
